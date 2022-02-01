@@ -1,0 +1,37 @@
+@import "./_variables/_varaibales"
+
+.container 
+    display: flex
+    justify-content: center
+    height: 100vh
+    width: 100vw
+
+    .video
+        display: flex
+        align-items: center
+        margin-top: 200px
+        flex-direction: column
+        &__cams
+
+            video
+                min-width: 400px
+                min-height: 200px
+                margin-left: 50px
+                background: $background
+                border-radius: $radius
+        &__btns
+            margin-top: 30px
+            button
+                background: #2f80ed
+                padding: 10px 0
+                color: #fff
+                width: 70px
+                border-radius: 3px
+                cursor: pointer
+                &:not(:first-child)
+                    margin-left: 10px
+                &:disabled
+                    opacity: .6
+                    cursor: default
+
+
