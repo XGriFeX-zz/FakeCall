@@ -172,7 +172,7 @@ function App() {
             </button>
           </div>
         </div>
-        <CallsStatisticList calls={calls} />
+        <CallsStatisticList calls={calls} setCalls={setCalls} />
       </div>
     </div>
   );

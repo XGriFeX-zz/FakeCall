@@ -5,7 +5,7 @@ import convertDataTime from '../../utils/convertDataTime';
 
 import styles from './CallsStatisticItem.module.sass';
 
-function CallsStatisticItem({ call: { id, date } }) {
+function CallsStatisticItem({ call: { id, date }, setCalls }) {
   const dataTime = useRef(
     convertDataTime((date.endTime.getTime() - date.startTime.getTime()) / 1000),
   );
@@ -32,6 +32,15 @@ function CallsStatisticItem({ call: { id, date } }) {
         {dataTime.current.minutes}
         :
         {dataTime.current.seconds}
+        <button
+          className={styles.calls__list__item__duration__trash}
+          type="button"
+          onClick={() => setCalls(
+            (prev) => prev.filter((call) => (call.id !== id ? call : null)),
+          )}
+        >
+          ❌
+        </button>
       </div>
     </li>
   );
@@ -45,6 +54,7 @@ CallsStatisticItem.propTypes = {
       endTime: propTypes.instanceOf(Date),
     }),
   }).isRequired,
+  setCalls: propTypes.func.isRequired,
 };
 
 export default CallsStatisticItem;
