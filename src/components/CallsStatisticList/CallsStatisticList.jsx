@@ -6,14 +6,17 @@ import getAllDuration from '../../utils/getAllDuration';
 import styles from './CallsStatisticList.module.sass';
 
 function CallsStatisticList({ calls, setCalls }) {
-  const time = getAllDuration(calls);
-
+  const { time, avarage } = getAllDuration(calls);
   return (
     <div className={styles.calls}>
       <header className={styles.calls__header}>
         <div className={styles.title}>CALLS</div>
+        <div className={styles.calls__header__average__call__time}>
+          {`average call time: 
+          ${avarage.hours}:${avarage.minutes}:${avarage.seconds}`}
+        </div>
         <div className={styles.calls__header__duration}>
-          {`DURATION: ${time.hours}:${time.minutes}:${time.seconds}`}
+          {`duration: ${time.hours}:${time.minutes}:${time.seconds}`}
         </div>
       </header>
       <ul className={styles.calls__list}>

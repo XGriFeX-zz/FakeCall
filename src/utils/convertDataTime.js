@@ -6,9 +6,9 @@ const convertDataTime = (time) => {
   const startSeconds = Math.floor(time % 3600 % 60);
 
   return {
-    hours: setCorrectDate(Math.round(startHours)),
-    minutes: setCorrectDate(Math.round(startMinutes)),
-    seconds: setCorrectDate(Math.round(startSeconds)),
+    hours: setCorrectDate(startHours) || '00',
+    minutes: setCorrectDate(startMinutes) || '00',
+    seconds: setCorrectDate(startSeconds) || '00',
   };
 };
 

@@ -11,19 +11,19 @@ function App() {
   const startBtnRef = useRef(null);
   const callBtnRef = useRef(null);
   const hangUpBtnRef = useRef(null);
-  const localStream = useRef();
-  const randomId = getRandromId();
-  let startTime;
-  let endTime;
-  let pc1;
-  let pc2;
+  const localStream = useRef(null);
+  const randomId = getRandromId(null);
+  const startTime = useRef(null);
+  const endTime = useRef(null);
+  const pc1 = useRef(null);
+  const pc2 = useRef(null);
 
   useEffect(() => {
     callBtnRef.current.disabled = true;
     hangUpBtnRef.current.disabled = true;
   }, []);
 
-  const getOtherPc = (pc) => (pc === pc1 ? pc2 : pc1);
+  const getOtherPc = (pc) => (pc === pc1.current ? pc2.current : pc1.current);
 
   const gotRemoteStream = (e) => {
     const [MediaStream] = e.streams;
@@ -35,13 +35,13 @@ function App() {
 
   const onCreateAnswerSuccess = async (desc) => {
     try {
-      await pc2.setLocalDescription(desc);
+      await pc2.current.setLocalDescription(desc);
     } catch (e) {
       throw Error;
     }
 
     try {
-      await pc1.setRemoteDescription(desc);
+      await pc1.current.setRemoteDescription(desc);
     } catch (e) {
       throw Error;
     }
@@ -49,19 +49,19 @@ function App() {
 
   const onCreateOfferSuccess = async (desc) => {
     try {
-      await pc1.setLocalDescription(desc);
+      await pc1.current.setLocalDescription(desc);
     } catch (e) {
       throw Error;
     }
 
     try {
-      await pc2.setRemoteDescription(desc);
+      await pc2.current.setRemoteDescription(desc);
     } catch (e) {
       throw Error;
     }
 
     try {
-      const answer = await pc2.createAnswer();
+      const answer = await pc2.current.createAnswer();
       await onCreateAnswerSuccess(answer);
     } catch (e) {
       throw Error;
@@ -89,37 +89,37 @@ function App() {
   };
 
   const call = () => {
-    startTime = new Date();
+    startTime.current = new Date();
     callBtnRef.current.disabled = true;
     hangUpBtnRef.current.disabled = false;
-    pc1 = new RTCPeerConnection({});
-    pc1.addEventListener('icecandidate', (e) => onIceCandidate(pc1, e));
-    pc2 = new RTCPeerConnection({});
-    pc2.addEventListener('icecandidate', (e) => onIceCandidate(pc2, e));
-    pc2.addEventListener('track', gotRemoteStream);
+    pc1.current = new RTCPeerConnection({});
+    pc1.current.addEventListener('icecandidate', (e) => onIceCandidate(pc1.current, e));
+    pc2.current = new RTCPeerConnection({});
+    pc2.current.addEventListener('icecandidate', (e) => onIceCandidate(pc2.current, e));
+    pc2.current.addEventListener('track', gotRemoteStream);
 
     localStream.current.getTracks()
-      .forEach((track) => pc1.addTrack(track, localStream.current));
+      .forEach((track) => pc1.current.addTrack(track, localStream.current));
 
-    pc1.createOffer({
+    pc1.current.createOffer({
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 1,
     }).then((offer) => { onCreateOfferSuccess(offer); });
   };
 
   const hangUp = () => {
-    endTime = new Date();
-    pc1.close();
-    pc2.close();
-    pc1 = null;
-    pc2 = null;
+    endTime.current = new Date();
+    pc1.current.close();
+    pc2.current.close();
+    pc1.current = null;
+    pc2.current = null;
     callBtnRef.current.disabled = false;
     hangUpBtnRef.current.disabled = true;
     setCalls((prev) => [...prev, {
       id: randomId(),
       date: {
-        startTime,
-        endTime,
+        startTime: startTime.current,
+        endTime: endTime.current,
       },
     }]);
   };
