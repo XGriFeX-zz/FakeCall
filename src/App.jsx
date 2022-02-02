@@ -1,14 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import CallsStatisticList from './components/CallsStatisticList/CallsStatisticList';
 
 import './App.sass';
+import getRandromId from './utils/getRandromId';
 
 function App() {
+  const [calls, setCalls] = useState([]);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const startBtnRef = useRef(null);
   const callBtnRef = useRef(null);
   const hangUpBtnRef = useRef(null);
   const localStream = useRef();
+  const randomId = getRandromId();
   let startTime;
   let endTime;
   let pc1;
@@ -82,11 +86,10 @@ function App() {
       localVideoRef.current.srcObject = dataStream;
       localStream.current = dataStream;
     });
-    console.log(localVideoRef.current.offsetWidth);
   };
 
   const call = () => {
-    startTime = new Date().getSeconds();
+    startTime = new Date();
     callBtnRef.current.disabled = true;
     hangUpBtnRef.current.disabled = false;
     pc1 = new RTCPeerConnection({});
@@ -105,62 +108,71 @@ function App() {
   };
 
   const hangUp = () => {
-    endTime = new Date().getSeconds();
-    console.log(`Time:  + ${endTime - startTime}`);
+    endTime = new Date();
     pc1.close();
     pc2.close();
     pc1 = null;
     pc2 = null;
     callBtnRef.current.disabled = false;
     hangUpBtnRef.current.disabled = true;
+    setCalls((prev) => [...prev, {
+      id: randomId(),
+      date: {
+        startTime,
+        endTime,
+      },
+    }]);
   };
 
   return (
     <div className="container">
-      <div className="video">
-        <div className="video__cams">
-          <video
-            ref={localVideoRef}
-            id="localVideo"
-            autoPlay
-            muted
-          >
-            <track kind="captions" />
-          </video>
-          <video
-            id="remoteVideo"
-            ref={remoteVideoRef}
-            onLoadedMetadata={() => {
-              remoteVideoRef.current.style.width = `${localVideoRef.current.offsetWidth}px`;
-            }}
-            autoPlay
-          >
-            <track kind="captions" />
-          </video>
+      <div className="wrapper">
+        <div className="video">
+          <div className="video__cams">
+            <video
+              ref={localVideoRef}
+              id="localVideo"
+              autoPlay
+              muted
+            >
+              <track kind="captions" />
+            </video>
+            <video
+              id="remoteVideo"
+              ref={remoteVideoRef}
+              onLoadedMetadata={() => {
+                remoteVideoRef.current.style.width = `${localVideoRef.current.offsetWidth}px`;
+              }}
+              autoPlay
+            >
+              <track kind="captions" />
+            </video>
+          </div>
+          <div className="video__btns">
+            <button
+              ref={startBtnRef}
+              onClick={start}
+              type="button"
+            >
+              Start
+            </button>
+            <button
+              ref={callBtnRef}
+              onClick={call}
+              type="button"
+            >
+              Call
+            </button>
+            <button
+              ref={hangUpBtnRef}
+              onClick={hangUp}
+              type="button"
+            >
+              Hang up
+            </button>
+          </div>
         </div>
-        <div className="video__btns">
-          <button
-            ref={startBtnRef}
-            onClick={start}
-            type="button"
-          >
-            Start
-          </button>
-          <button
-            ref={callBtnRef}
-            onClick={call}
-            type="button"
-          >
-            Call
-          </button>
-          <button
-            ref={hangUpBtnRef}
-            onClick={hangUp}
-            type="button"
-          >
-            Hang up
-          </button>
-        </div>
+        <CallsStatisticList calls={calls} />
       </div>
     </div>
   );
