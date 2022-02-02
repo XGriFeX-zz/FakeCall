@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CallsStatisticItem from '../CallsStatisticItem/CallsStatisticItem';
-
-import styles from './CallsStatisticList.module.sass';
 import getAllDuration from '../../utils/getAllDuration';
 
-function CallsStatisticList({ calls }) {
+import styles from './CallsStatisticList.module.sass';
+
+function CallsStatisticList({ calls, setCalls }) {
   const time = getAllDuration(calls);
 
   return (
@@ -18,7 +18,9 @@ function CallsStatisticList({ calls }) {
       </header>
       <ul className={styles.calls__list}>
         {
-          calls.map((call) => <CallsStatisticItem key={call.id} call={call} />)
+          calls.map(
+            (call) => <CallsStatisticItem key={call.id} call={call} setCalls={setCalls} />,
+          )
         }
       </ul>
     </div>
@@ -33,6 +35,7 @@ CallsStatisticList.propTypes = {
       endTime: PropTypes.number,
     }),
   })).isRequired,
+  setCalls: PropTypes.func.isRequired,
 };
 
 export default CallsStatisticList;
