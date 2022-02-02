@@ -3,22 +3,24 @@
 .container 
     display: flex
     justify-content: center
-    height: 100vh
-    width: 100vw
 
+    .wrapper
+        min-width: 400px
     .video
         display: flex
         align-items: center
-        margin-top: 200px
+        margin-top: 50px
         flex-direction: column
         &__cams
-
             video
                 min-width: 400px
                 min-height: 200px
-                margin-left: 50px
+                max-width: 600px
+                max-height: 400px
                 background: $background
                 border-radius: $radius
+                &:not(:first-child)
+                    margin-left: 50px
         &__btns
             margin-top: 30px
             button
